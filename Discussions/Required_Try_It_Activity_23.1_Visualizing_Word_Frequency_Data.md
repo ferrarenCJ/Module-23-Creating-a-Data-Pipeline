@@ -18,12 +18,3 @@ These libraries provide different levels of complexity and visualization capabil
 
 ---
 
-## Peer Response Template 1
-
-I enjoyed reading your comparison between pandas and D3. I agree that pandas is excellent for rapid analysis, while D3 provides significantly more flexibility for interactive visualizations. Have you found any situations where the additional development effort required by D3 was justified by the enhanced user experience?
-
----
-
-## Peer Response Template 2
-
-Your discussion highlighted some great visualization tools. I was particularly interested in your choice of Chart.js because of its simplicity and ease of deployment. How do you think Chart.js compares to D3 when handling large datasets or building more advanced analytical dashboards?
