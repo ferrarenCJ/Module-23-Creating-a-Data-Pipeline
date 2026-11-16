@@ -1,43 +1,72 @@
-# Required Project 23.1: Creating a Sensemaking Data Pipeline
+# Project 23.1: Creating a Sensemaking Data Pipeline
 
-## Project Information
-
-| Item | Details |
-|--------|----------|
-| Module | Module 23 - Creating a Data Pipeline |
-| Project | Project 23.1 |
-| Points | 100 |
-| Due Date | Thursday, November 19, 2026 at 4:29 PM UTC |
-| Submission Type | Word Document with Screenshots |
-| Estimated Time | 10 Hours |
-
----
-
-# Learning Outcomes
-
-By completing this project, you will be able to:
-
-1. Implement JavaScript tools to visualize word frequency data.
-2. Create a sensemaking data pipeline.
+## MIT Professional Certificate in Data Engineering
+### Module 23 - Creating a Data Pipeline
 
 ---
 
 # Project Overview
 
-In this project, you will create an automated data pipeline that extracts unstructured data from the MIT Course Catalog, transforms it into a structured dataset, and visualizes the results using D3.js.
+This project focused on designing and implementing a complete **Sensemaking Data Pipeline** capable of extracting, processing, analyzing, and visualizing unstructured data from the MIT Course Catalog.
 
-The project combines:
+The project combined multiple technologies introduced throughout the MIT Professional Certificate in Data Engineering program, including:
 
 - Python
-- HTML
-- JSON
-- BeautifulSoup
 - Apache Airflow
 - Docker
+- BeautifulSoup4
+- JSON
+- HTML
 - JavaScript
 - D3.js
 
-into a complete end-to-end data engineering workflow.
+The primary goal was to automate the collection of course catalog data, transform the data into a structured format, perform word frequency analysis, and generate interactive visualizations.
+
+---
+
+# Project Objectives
+
+The project was designed to:
+
+1. Extract unstructured HTML data from the MIT Course Catalog.
+2. Automate extraction using Python and Airflow.
+3. Combine multiple catalog pages into a single source.
+4. Parse HTML content using BeautifulSoup4.
+5. Extract MIT course titles.
+6. Clean extracted data by removing punctuation and unwanted values.
+7. Perform word frequency analysis.
+8. Export results as JSON.
+9. Visualize the analyzed data using D3.js.
+10. Orchestrate the entire workflow using Apache Airflow running in Docker.
+
+---
+
+# Technologies Used
+
+## Programming Languages
+
+- Python
+- JavaScript
+- HTML
+
+## Data Processing
+
+- urllib
+- BeautifulSoup4
+- JSON
+- collections.Counter
+
+## Data Engineering
+
+- Apache Airflow
+- Docker
+- Docker Compose
+
+## Visualization
+
+- D3.js
+- SVG
+- JavaScript Force Layouts
 
 ---
 
@@ -45,597 +74,423 @@ into a complete end-to-end data engineering workflow.
 
 ```text
 MIT Course Catalog
-         │
-         ▼
-Data Extraction
-(urllib)
-         │
-         ▼
-Raw HTML Files
-         │
-         ▼
-Combine HTML Files
-         │
-         ▼
-Extract Course Titles
-(BeautifulSoup)
-         │
-         ▼
-Clean Words
-         │
-         ▼
-Count Word Frequency
-         │
-         ▼
-words.json
-         │
-         ▼
-D3 Visualization
-         │
-         ▼
-Bubble Chart
+          │
+          ▼
+     catalog()
+          │
+          ▼
+ Download HTML Files
+          │
+          ▼
+     combine()
+          │
+          ▼
+      combo.txt
+          │
+          ▼
+      titles()
+          │
+          ▼
+    titles.json
+          │
+          ▼
+       clean()
+          │
+          ▼
+ titles_clean.json
+          │
+          ▼
+   count_words()
+          │
+          ▼
+      words.json
+          │
+          ▼
+       words.js
+          │
+          ▼
+   D3 Visualization
 ```
 
 ---
 
-# Technologies Used
+# Airflow Workflow
 
-## Data Extraction
+The Airflow DAG contained six tasks:
 
-- urllib
+| Task ID | Function |
+|----------|----------|
+| task_zero | Install BeautifulSoup4 |
+| task_one | catalog() |
+| task_two | combine() |
+| task_three | titles() |
+| task_four | clean() |
+| task_five | count_words() |
 
-## Data Processing
-
-- BeautifulSoup4
-- JSON
-- Python
-
-## Workflow Orchestration
-
-- Apache Airflow
-
-## Containerization
-
-- Docker
-
-## Visualization
-
-- JavaScript
-- D3.js
-
----
-
-# Deliverables
-
-The final submission is a Word document containing screenshots that demonstrate:
-
-1. Project setup
-2. Python task implementation
-3. Airflow DAG configuration
-4. Docker execution
-5. Generated JSON files
-6. D3 visualizations
-
----
-
-# Part 1: Code Development
-
----
-
-## Step 1: Create Project Structure
-
-### Required Folder Structure
+Workflow:
 
 ```text
-project-23
-│
-├── airflow-docker
-│
-├── code_visualization
-│
-└── assignment.py
+task_zero
+      │
+      ▼
+task_one
+      │
+      ▼
+task_two
+      │
+      ▼
+task_three
+      │
+      ▼
+task_four
+      │
+      ▼
+task_five
 ```
-
-### Deliverable
-
-Screenshot showing:
-
-- project-23 folder
-- airflow-docker folder
-- code_visualization folder
-- assignment.py
 
 ---
 
-## Step 2: Import Required Libraries
+# Python Functions
 
-### Required Imports
+## catalog()
 
-```python
-from airflow import DAG
-from datetime import timedelta
-from airflow.operators.bash import BashOperator
-from airflow.utils.dates import days_ago
-from airflow.operators.python import PythonOperator
+Purpose:
 
-import urllib.request
-import time
-import glob
-import os
-import json
-```
+- Read MIT catalog URLs.
+- Download each HTML page.
+- Store pages locally.
 
-### Deliverable
+Features:
 
-Screenshot showing all required imports.
+- urllib.request
+- Exception handling
+- Automatic file generation
 
----
-
-## Step 3: Build Task 1 - catalog()
-
-### Purpose
-
-Download MIT Course Catalog HTML pages.
-
-### Helper Functions
-
-#### pull(url)
-
-Responsible for:
+Output:
 
 ```text
-Retrieve HTML content
+m1a.html
+m1b.html
+...
+m22c.html
 ```
-
-#### store(data, file)
-
-Responsible for:
-
-```text
-Store HTML content locally
-```
-
-### Expected Workflow
-
-```text
-URL
- ▼
-pull()
- ▼
-HTML Data
- ▼
-store()
- ▼
-HTML File
-```
-
-### Deliverable
-
-Screenshot showing:
-
-- catalog()
-- pull()
-- store()
 
 ---
 
-## Step 4: Build URL Processing Loop
+## combine()
 
-### Purpose
+Purpose:
 
-Iterate through all URLs.
+Combine all catalog HTML files into a single file.
 
-### Workflow
-
-```python
-for url in urls:
-```
-
-Each iteration:
-
-1. Calls pull()
-2. Creates filename
-3. Calls store()
-4. Waits 15 seconds
-
-### Deliverable
-
-Screenshot showing:
-
-- urls list
-- for loop
-- pull()
-- store()
-
----
-
-## Step 5: Build Task 2 - combine()
-
-### Purpose
-
-Combine downloaded HTML files into a single file.
-
-### Output
+Output:
 
 ```text
 combo.txt
 ```
 
-### Workflow
-
-```text
-HTML Files
-      ▼
-combine()
-      ▼
-combo.txt
-```
-
-### Deliverable
-
-Screenshot showing complete combine() function.
-
 ---
 
-## Step 6: Build Task 3 - titles()
+## titles()
 
-### Purpose
+Purpose:
 
-Extract course titles from HTML.
+Extract course titles from HTML using BeautifulSoup4.
 
-### Library
+Method:
 
 ```python
-BeautifulSoup4
+soup.find_all('h3')
 ```
 
-### Processing Steps
-
-1. Read combo.txt
-2. Parse HTML
-3. Find all h3 tags
-4. Extract text
-5. Save JSON
-
-### Output
+Output:
 
 ```text
 titles.json
 ```
 
-### Deliverable
-
-Screenshot showing completed titles() method.
-
 ---
 
-## Step 7: Build Task 4 - clean()
+## clean()
 
-### Purpose
+Purpose:
 
-Clean extracted course titles.
+Prepare title data for analysis.
 
-### Actions
+Processing:
 
-Remove:
+- Remove punctuation
+- Remove numeric characters
+- Remove one-character words
 
-- Punctuation
-- Numbers
-- Single-character words
-
-### Output
+Output:
 
 ```text
 titles_clean.json
 ```
 
-### Deliverable
-
-Screenshot showing completed clean() method.
-
 ---
 
-## Step 8: Build Task 5 - count_words()
+## count_words()
 
-### Purpose
+Purpose:
 
 Calculate word frequencies.
 
-### Library
+Method:
 
 ```python
-collections.Counter
+Counter(words)
 ```
 
-### Processing
-
-```text
-titles_clean.json
-         ▼
-Extract Words
-         ▼
-Count Frequencies
-         ▼
-words.json
-```
-
-### Output
+Output:
 
 ```text
 words.json
 ```
 
-### Deliverable
-
-Screenshot showing completed count_words() function.
-
 ---
 
-## Step 9: Create Airflow DAG
+# Data Processing Results
 
-### Required Tasks
+The pipeline successfully extracted and analyzed thousands of words from MIT course titles.
 
-| Task | Function |
-|--------|----------|
-| t0 | Install BeautifulSoup |
-| t1 | catalog() |
-| t2 | combine() |
-| t3 | titles() |
-| t4 | clean() |
-| t5 | count_words() |
+Examples of high-frequency words:
 
-### Workflow
+| Word | Frequency |
+|--------|--------|
+| and | 1279 |
+| in | 831 |
+| of | 450 |
+| Engineering | 377 |
+| Special | 331 |
+| Subject | 246 |
+| Design | 234 |
+| Seminar | 231 |
+| for | 221 |
+| Systems | 191 |
+| Introduction | 190 |
+| Science | 171 |
 
-```text
-t0
- ▼
-t1
- ▼
-t2
- ▼
-t3
- ▼
-t4
- ▼
-t5
-```
-
-### Deliverable
-
-Screenshot showing DAG definition and all tasks.
-
----
-
-# Part 2: Code Execution
-
----
-
-## Step 10: Deploy to Airflow
-
-### Copy DAG
-
-```bash
-cp assignment.py airflow-docker/dags
-```
-
-### Configure Docker
-
-Increase:
-
-- CPU
-- Memory
-
-### Install Airflow
-
-Follow Mini-Lesson 19.2.
-
-### Deliverable
-
-Screenshot showing Airflow containers running in Docker.
-
----
-
-## Step 11: Execute DAG
-
-### Access Airflow
-
-```text
-http://localhost:8080
-```
-
-### Credentials
-
-```text
-Username: airflow
-Password: airflow
-```
-
-Run:
-
-```text
-assignment DAG
-```
-
-### Deliverable
-
-Screenshot showing successful DAG execution.
-
----
-
-## Step 12: Retrieve words.json
-
-### Access Worker Container
-
-```bash
-docker exec -it airflow-docker-airflow-worker-1 /bin/bash
-```
-
-### Confirm File Exists
-
-```bash
-ls
-```
-
-Verify:
+These frequencies were stored in:
 
 ```text
 words.json
 ```
 
-### Copy File to Local Machine
-
-```bash
-docker cp airflow-docker-airflow-worker-1:/opt/airflow/words.json YOUR_PATH_HERE
-```
-
-### Create words.js
-
-Transfer contents from:
-
-```text
-words.json
-```
-
-to:
+and later converted into:
 
 ```text
 words.js
 ```
 
-### Deliverable
-
-Screenshot showing beginning of words.js.
+for visualization.
 
 ---
 
-## Step 13: Run Provided Visualization
+# Visualization Development
 
-### Open
+## Initial Visualization
+
+The provided:
 
 ```text
 mitcourses_graph.html
 ```
 
-Example:
+file was used to display the generated word-frequency data.
 
-```text
-file:///YOUR_PATH/project-23/code_visualization/mitcourses_graph.html
-```
-
-### Deliverable
-
-Screenshot showing visualization output.
-
----
-
-## Step 14: Create Enhanced D3 Visualization
-
-### Objective
-
-Modify:
-
-```text
-d3_bubble_chart_example.html
-```
-
-to visualize:
-
-```text
-words.json
-```
-
-### Example Bubble Visualization
-
-```text
-Large Bubble
-      Data
-
-Medium Bubble
-      Systems
-
-Small Bubble
-      Engineering
-```
-
-### Deliverable
-
-Screenshot showing enhanced D3 visualization.
-
----
-
-# Submission Checklist
-
-## Part 1: Code Development
-
-- [ ] Step 1 Screenshot
-- [ ] Step 2 Screenshot
-- [ ] Step 3 Screenshot
-- [ ] Step 4 Screenshot
-- [ ] Step 5 Screenshot
-- [ ] Step 6 Screenshot
-- [ ] Step 7 Screenshot
-- [ ] Step 8 Screenshot
-- [ ] Step 9 Screenshot
-
-## Part 2: Code Execution
-
-- [ ] Docker Running Screenshot
-- [ ] Successful DAG Screenshot
-- [ ] words.js Screenshot
-- [ ] D3 Visualization Screenshot
-- [ ] Enhanced Bubble Chart Screenshot
-
----
-
-# Key Learning Areas
-
-This project demonstrates:
-
-### Data Engineering
-
-- Data Pipelines
-- Workflow Orchestration
-- ETL Concepts
-
-### Data Processing
-
-- Web Scraping
-- HTML Parsing
-- JSON Processing
-
-### Automation
-
-- Airflow
-- Docker
-
-### Visualization
+The graph utilized:
 
 - JavaScript
 - D3.js
+- Force-directed bubble layouts
+
+The visualization displayed:
+
+- Word-frequency relationships
+- Relative importance through bubble size
+- Interactive tooltips
+
+---
+
+## Enhanced Visualization
+
+The visualization was enhanced to:
+
+### Improvements
+
+- Display the top 100 words
+- Show word labels directly on bubbles
+- Display frequency counts
+- Freeze the force layout after stabilization
+- Improve readability
+- Create a cleaner presentation
+
+Examples displayed on the final visualization:
+
+```text
+and (1279)
+in (831)
+of (450)
+Engineering (377)
+Special (331)
+Design (234)
+Seminar (231)
+Systems (191)
+Introduction (190)
+Science (171)
+```
+
+The result was a significantly more informative and user-friendly visualization.
+
+---
+
+# Docker Implementation
+
+Apache Airflow was deployed using Docker.
+
+Services included:
+
+- airflow-webserver
+- airflow-scheduler
+- airflow-worker
+- postgres
+- redis
+- flower
+
+Benefits:
+
+- Reproducibility
+- Isolation
+- Simplified deployment
+- Consistent execution environment
+
+---
+
+# Challenges Encountered
+
+## File Location Issues
+
+The initial implementation failed because Airflow executed tasks from:
+
+```text
+/opt/airflow
+```
+
+rather than:
+
+```text
+/opt/airflow/dags
+```
+
+This caused:
+
+```text
+FileNotFoundError: 00_urls.txt
+```
+
+Solution:
+
+```python
+url_file = os.path.join(
+    os.path.dirname(__file__),
+    "00_urls.txt"
+)
+```
+
+---
+
+## Missing Catalog Pages
+
+Several URLs from the catalog list returned:
+
+```text
+HTTP Error 404: Not Found
+```
+
+Solution:
+
+```python
+try:
+    ...
+except Exception as e:
+    ...
+```
+
+This allowed the pipeline to continue processing valid catalog pages.
+
+---
+
+# Key Learning Outcomes
+
+This project demonstrated:
+
+## Data Engineering
+
+- ETL Principles
+- Workflow Automation
+- Airflow DAG Development
+- Docker Deployment
+
+## Data Processing
+
+- Web Scraping
+- HTML Parsing
+- JSON Serialization
+- Text Cleaning
+
+## Analytics
+
+- Word Frequency Analysis
+- Data Transformation
+- Data Aggregation
+
+## Visualization
+
+- D3.js Development
+- Force Layouts
+- Interactive Graphs
 - Bubble Charts
 
 ---
 
-# Personal Notes
+# Conclusion
 
-Project 23.1 is one of the strongest portfolio projects in the MIT Professional Certificate in Data Engineering program because it demonstrates a complete end-to-end pipeline:
+Project 23.1 successfully implemented a complete Sensemaking Data Pipeline capable of collecting unstructured MIT course catalog information and transforming it into meaningful visual insights.
 
-```text
-Web Data
-    ↓
-Extraction
-    ↓
-Cleaning
-    ↓
-Transformation
-    ↓
-Analysis
-    ↓
-JSON
-    ↓
-Visualization
-    ↓
-Workflow Automation
-```
+The final solution integrated:
 
-The project combines web scraping, data engineering, workflow orchestration, and data visualization into a single real-world workflow that resembles modern production analytics systems.
+- Python
+- Apache Airflow
+- Docker
+- BeautifulSoup4
+- JSON
+- JavaScript
+- D3.js
+
+into a fully automated workflow.
+
+This project represents a real-world example of how data engineers extract, clean, transform, analyze, and visualize unstructured information using modern data engineering tools and techniques.
+
+---
+
+# Deliverables Completed
+
+✅ Project Structure  
+✅ Airflow DAG Development  
+✅ Docker Deployment  
+✅ MIT Catalog Extraction  
+✅ HTML Processing  
+✅ Course Title Extraction  
+✅ Data Cleaning  
+✅ Word Frequency Analysis  
+✅ words.json Generation  
+✅ words.js Generation  
+✅ Original D3 Visualization  
+✅ Enhanced D3 Bubble Chart Visualization  
+✅ Successful End-to-End Pipeline Execution
+
+## Project Status
+
+**Completed Successfully**
